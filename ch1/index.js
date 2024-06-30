@@ -1,6 +1,6 @@
 import invoices from './invoices.json' assert { type: "json" };
 import plays from './plays.json' assert { type: "json" };
-import statement from './statement.js';
+import { statement, htmlStatement } from './statement.js';
 
 const colors = {
     reset: '\x1b[0m',
@@ -33,6 +33,8 @@ Invoice (Customer: BigCo)
 Total: $1,460.00
 Volume Credits: 47 credits
 `, statement(invoices[0], plays));
+
+        console.log(htmlStatement(invoices[0], plays))
 }
 
 main();
