@@ -10,10 +10,10 @@ function print(text, color = "reset") {
     console.log(colors["reset"]);
 }
 
-function renderPlainText(statementData, invoice, plays) {
-    let result = `Invoice (Customer: ${invoice.customer})\n`;
+function renderPlainText(data, plays) {
+    let result = `Invoice (Customer: ${data.customer})\n`;
 
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
         result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
     }
 
@@ -61,7 +61,7 @@ function renderPlainText(statementData, invoice, plays) {
 
     function totalVolumeCredits() {
         let result = 0;
-        for (let perf of invoice.performances) {
+        for (let perf of data.performances) {
             result += volumeCreditsFor(perf);
         }
         return result;
@@ -69,7 +69,7 @@ function renderPlainText(statementData, invoice, plays) {
 
     function totalAmount() {
         let result = 0;
-        for (let perf of invoice.performances) {
+        for (let perf of data.performances) {
             result += amountFor(perf, playFor(perf));
         }
         return result;
@@ -77,8 +77,10 @@ function renderPlainText(statementData, invoice, plays) {
 }
 
 function statement(invoice, plays) {
-    const statementData = {}
-    return renderPlainText(statementData, invoice, plays);
+    const statementData = {};
+    statementData.customer = invoice.customer;
+    statementData.performances = invoice.performances;
+    return renderPlainText(statementData, plays);
 }
 
 const invoices = require('./invoices.json');
