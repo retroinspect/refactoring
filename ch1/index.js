@@ -15,7 +15,10 @@ function statement(invoice, plays) {
     let totalAmount = 0;
     let volumeCredits = 0;
     let result = `Invoice (Customer: ${invoice.customer})\n`;
-    const format = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
+
+    function usd(aNumber) {
+        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(aNumber / 100);
+    }
 
     function playFor(aPerformance) {
         return plays[aPerformance.playID];
@@ -45,19 +48,19 @@ function statement(invoice, plays) {
     }
 
     function volumeCreditsFor(aPerformance) {
-        let volumeCredits = 0
+        let volumeCredits = 0;
         volumeCredits += Math.max(aPerformance.audience - 30, 0);
         if ("comedy" === playFor(aPerformance).type) volumeCredits += Math.floor(aPerformance.audience / 5);
-        return volumeCredits
+        return volumeCredits;
     }
 
     for (let perf of invoice.performances) {
-        volumeCredits += volumeCreditsFor(perf)
-        result += ` ${playFor(perf).name}: ${format(amountFor(perf, playFor(perf)) / 100)} (${perf.audience})\n`;
+        volumeCredits += volumeCreditsFor(perf);
+        result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
         totalAmount += amountFor(perf, playFor(perf));
     }
 
-    result += `Total: ${format(totalAmount / 100)}\n`;
+    result += `Total: ${usd(totalAmount)}\n`;
     result += `Volume Credits: ${volumeCredits} credits\n`;
     return result;
 }
