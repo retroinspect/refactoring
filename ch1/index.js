@@ -1,5 +1,6 @@
 function amountFor(aPerformance, play) {
     let result = 0;
+
     switch (play.type) {
         case "tragedy":
             result = 40000;
@@ -26,8 +27,12 @@ function statement(invoice, plays) {
     let result = `Invoice (Customer: ${invoice.customer})\n`;
     const format = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
 
+    function playFor(aPerformance) {
+        return plays[aPerformance.playID]
+    }
+        
     for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
+        const play = playFor(perf);
         const thisAmount = amountFor(perf, play);
 
         volumeCredits += Math.max(perf.audience - 30, 0);
