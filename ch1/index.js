@@ -1,3 +1,15 @@
+colors = {
+    reset: '\x1b[0m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+}
+
+function print(text, color="reset") {
+    console.log(colors[color])
+    console.log(text)
+    console.log(colors["reset"])
+}
+
 function amountFor(aPerformance, play) {
     let result = 0;
 
@@ -50,5 +62,21 @@ function statement(invoice, plays) {
 const invoices = require('./invoices.json');
 const plays = require('./plays.json');
 
-const invoice = statement(invoices[0], plays);
-console.log(invoice);
+const expected = `
+Invoice (Customer: BigCo)
+ Hamlet: $650.00 (55)
+ As You Like It: $310.00 (35)
+ Othello: $500.00 (40)
+Total: $1,460.00
+Volume Credits: 47 credits
+`
+
+const actual = statement(invoices[0], plays);
+
+if (expected.trim() === actual.trim()) {
+    print("PASS", "green")
+} else {
+    print("FAIL", "red")
+    print(`expected: ${expected}`)
+    print(`actual: ${actual}`)
+}
