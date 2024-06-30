@@ -14,7 +14,7 @@ function renderPlainText(data, plays) {
     let result = `Invoice (Customer: ${data.customer})\n`;
 
     for (let perf of data.performances) {
-        result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
+        result += ` ${perf.play.name}: ${usd(perf.amount)} (${perf.audience})\n`;
     }
 
     result += `Total: ${usd(totalAmount())}\n`;
@@ -27,28 +27,6 @@ function renderPlainText(data, plays) {
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(aNumber / 100);
     }
 
-    function amountFor(aPerformance) {
-        let result = 0;
-
-        switch (aPerformance.play.type) {
-            case "tragedy":
-                result = 40000;
-                if (aPerformance.audience > 30) {
-                    result += 1000 * (aPerformance.audience - 30);
-                }
-                break;
-            case "comedy":
-                result = 3000;
-                if (aPerformance.audience > 20) {
-                    result += 10000 + 500 * (aPerformance.audience - 20);
-                }
-                result += 300 * aPerformance.audience;
-                break;
-            default:
-                throw new Error(`Unknown genre: ${aPerformance.play.type}`);
-        }
-        return result;
-    }
 
     function volumeCreditsFor(aPerformance) {
         let volumeCredits = 0;
@@ -68,7 +46,7 @@ function renderPlainText(data, plays) {
     function totalAmount() {
         let result = 0;
         for (let perf of data.performances) {
-            result += amountFor(perf, playFor(perf));
+            result += perf.amount;
         }
         return result;
     }
@@ -82,11 +60,34 @@ function statement(invoice, plays) {
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
         result.play = playFor(result);
+        result.amount = amountFor(result);
         return result;
     }
 
     function playFor(aPerformance) {
         return plays[aPerformance.playID];
+    }
+
+    function amountFor(aPerformance) {
+        let result = 0;
+        switch (aPerformance.play.type) {
+            case "tragedy":
+                result = 40000;
+                if (aPerformance.audience > 30) {
+                    result += 1000 * (aPerformance.audience - 30);
+                }
+                break;
+            case "comedy":
+                result = 3000;
+                if (aPerformance.audience > 20) {
+                    result += 10000 + 500 * (aPerformance.audience - 20);
+                }
+                result += 300 * aPerformance.audience;
+                break;
+            default:
+                throw new Error(`Unknown genre: ${aPerformance.play.type}`);
+        }
+        return result;
     }
 
     return renderPlainText(statementData, plays);
