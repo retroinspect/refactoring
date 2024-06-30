@@ -14,6 +14,14 @@ function print(text, color = "reset") {
 function statement(invoice, plays) {
     let result = `Invoice (Customer: ${invoice.customer})\n`;
 
+    for (let perf of invoice.performances) {
+        result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
+    }
+
+    result += `Total: ${usd(totalAmount())}\n`;
+    result += `Volume Credits: ${totalVolumeCredits()} credits\n`;
+    return result;
+
     function usd(aNumber) {
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(aNumber / 100);
     }
@@ -67,14 +75,6 @@ function statement(invoice, plays) {
         }
         return result;
     }
-
-    for (let perf of invoice.performances) {
-        result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
-    }
-
-    result += `Total: ${usd(totalAmount())}\n`;
-    result += `Volume Credits: ${totalVolumeCredits()} credits\n`;
-    return result;
 }
 
 const invoices = require('./invoices.json');
