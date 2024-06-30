@@ -12,7 +12,6 @@ function print(text, color = "reset") {
 
 
 function statement(invoice, plays) {
-    let totalAmount = 0;
     let result = `Invoice (Customer: ${invoice.customer})\n`;
 
     function usd(aNumber) {
@@ -54,20 +53,26 @@ function statement(invoice, plays) {
     }
 
     function totalVolumeCredits() {
-        let volumeCredits = 0;
+        let result = 0;
         for (let perf of invoice.performances) {
-            volumeCredits += volumeCreditsFor(perf);
+            result += volumeCreditsFor(perf);
         }
-        return volumeCredits
+        return result;
     }
 
+    function totalAmount() {
+        let result = 0;
+        for (let perf of invoice.performances) {
+            result += amountFor(perf, playFor(perf));
+        }
+        return result;
+    }
 
     for (let perf of invoice.performances) {
         result += ` ${playFor(perf).name}: ${usd(amountFor(perf, playFor(perf)))} (${perf.audience})\n`;
-        totalAmount += amountFor(perf, playFor(perf));
     }
 
-    result += `Total: ${usd(totalAmount)}\n`;
+    result += `Total: ${usd(totalAmount())}\n`;
     result += `Volume Credits: ${totalVolumeCredits()} credits\n`;
     return result;
 }
