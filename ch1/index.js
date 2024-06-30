@@ -21,7 +21,7 @@ function statement(invoice, plays) {
         return plays[aPerformance.playID];
     }
 
-    function amountFor(aPerformance, play) {
+    function amountFor(aPerformance) {
         let result = 0;
 
         switch (playFor(aPerformance).type) {
