@@ -2,12 +2,12 @@ colors = {
     reset: '\x1b[0m',
     red: '\x1b[31m',
     green: '\x1b[32m',
-}
+};
 
-function print(text, color="reset") {
-    console.log(colors[color])
-    console.log(text)
-    console.log(colors["reset"])
+function print(text, color = "reset") {
+    console.log(colors[color]);
+    console.log(text);
+    console.log(colors["reset"]);
 }
 
 function amountFor(aPerformance, play) {
@@ -40,17 +40,16 @@ function statement(invoice, plays) {
     const format = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
 
     function playFor(aPerformance) {
-        return plays[aPerformance.playID]
+        return plays[aPerformance.playID];
     }
-        
+
     for (let perf of invoice.performances) {
-        const play = playFor(perf);
-        const thisAmount = amountFor(perf, play);
+        const thisAmount = amountFor(perf, playFor(perf));
 
         volumeCredits += Math.max(perf.audience - 30, 0);
-        if ("comedy" === play.type) volumeCredits += Math.floor(perf.audience / 5);
+        if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
 
-        result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience})\n`;
+        result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${perf.audience})\n`;
         totalAmount += thisAmount;
     }
 
@@ -69,14 +68,14 @@ Invoice (Customer: BigCo)
  Othello: $500.00 (40)
 Total: $1,460.00
 Volume Credits: 47 credits
-`
+`;
 
 const actual = statement(invoices[0], plays);
 
 if (expected.trim() === actual.trim()) {
-    print("PASS", "green")
+    print("PASS", "green");
 } else {
-    print("FAIL", "red")
-    print(`expected: ${expected}`)
-    print(`actual: ${actual}`)
+    print("FAIL", "red");
+    print(`expected: ${expected}`);
+    print(`actual: ${actual}`);
 }
