@@ -10,44 +10,32 @@ function print(text, color = "reset") {
     console.log(colors["reset"]);
 }
 
-function renderPlainText(data, plays) {
+function renderPlainText(data) {
     let result = `Invoice (Customer: ${data.customer})\n`;
 
     for (let perf of data.performances) {
         result += ` ${perf.play.name}: ${usd(perf.amount)} (${perf.audience})\n`;
     }
 
-    result += `Total: ${usd(totalAmount())}\n`;
-    result += `Volume Credits: ${totalVolumeCredits()} credits\n`;
+    result += `Total: ${usd(data.totalAmount)}\n`;
+    result += `Volume Credits: ${data.totalVolumeCredits} credits\n`;
     return result;
-
 
 
     function usd(aNumber) {
         return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(aNumber / 100);
     }
 
-    function totalVolumeCredits() {
-        let result = 0;
-        for (let perf of data.performances) {
-            result += perf.volumeCredits;
-        }
-        return result;
-    }
 
-    function totalAmount() {
-        let result = 0;
-        for (let perf of data.performances) {
-            result += perf.amount;
-        }
-        return result;
-    }
 }
 
 function statement(invoice, plays) {
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = totalAmount(statementData)
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData)
+
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
@@ -88,6 +76,22 @@ function statement(invoice, plays) {
         volumeCredits += Math.max(aPerformance.audience - 30, 0);
         if ("comedy" === aPerformance.play.type) volumeCredits += Math.floor(aPerformance.audience / 5);
         return volumeCredits;
+    }
+
+    function totalVolumeCredits(data) {
+        let result = 0;
+        for (let perf of data.performances) {
+            result += perf.volumeCredits;
+        }
+        return result;
+    }
+
+    function totalAmount(data) {
+        let result = 0;
+        for (let perf of data.performances) {
+            result += perf.amount;
+        }
+        return result;
     }
 
     return renderPlainText(statementData, plays);
