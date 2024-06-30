@@ -10,7 +10,7 @@ function print(text, color = "reset") {
     console.log(colors["reset"]);
 }
 
-function renderPlainText(invoice, plays) {
+function renderPlainText(statementData, invoice, plays) {
     let result = `Invoice (Customer: ${invoice.customer})\n`;
 
     for (let perf of invoice.performances) {
@@ -74,11 +74,11 @@ function renderPlainText(invoice, plays) {
         }
         return result;
     }
-
 }
 
 function statement(invoice, plays) {
-    return renderPlainText(invoice, plays);
+    const statementData = {}
+    return renderPlainText(statementData, invoice, plays);
 }
 
 const invoices = require('./invoices.json');
